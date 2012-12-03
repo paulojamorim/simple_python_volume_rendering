@@ -138,8 +138,8 @@ class VolumeRenderSkeleton(GLCanvas):
             gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
         }
         '''        
-        self.fragment_src_file = 'earth.f.c'
-        self.vertex_src_file = 'earth.v.c'
+        #self.fragment_src_file = 'earth.f.c'
+        #self.vertex_src_file = 'earth.v.c'
         self.lighting = False
         self.light_count = 1
         
@@ -177,6 +177,8 @@ class VolumeRenderSkeleton(GLCanvas):
         glColor(0.0, 1.0, 0.0)
         glDisable(GL_LIGHTING)
         glVertexPointerf(box)
+       
+        #from original code 
         glDrawArrays(GL_LINES, 0, len(box))
 
         # Draw the slice planes
@@ -249,10 +251,8 @@ class VolumeRenderSkeleton(GLCanvas):
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_1D, self.transfer_function)
         glUniform1i(glGetUniformLocation(self.program, "TransferFunction"), 0)
-        glUniform1i(glGetUniformLocation(self.program, "EnableLighting"), 
-                    self.lighting)
-        glUniform1i(glGetUniformLocation(self.program, "NumberOfLights"), 
-                    self.light_count)
+        glUniform1i(glGetUniformLocation(self.program, "EnableLighting"),self.lighting)
+        glUniform1i(glGetUniformLocation(self.program, "NumberOfLights"), self.light_count)
 
     def BuildGeometry(self):
         #plane_count = 100
@@ -261,11 +261,10 @@ class VolumeRenderSkeleton(GLCanvas):
                 
         for k in self.planes_vbo.keys():
             fwd = [gen_plane(p=(i*increment), t=k) for i in range(plane_count + 1)]
-            
             rev = []
             rev.extend(fwd)
             rev.reverse()
-            
+            print ">>>>>>>>>>>>",rev[0][0]
             data = (array(fwd, dtype=numpy.float32).flatten(), 
                     array(rev, dtype=numpy.float32).flatten())
 

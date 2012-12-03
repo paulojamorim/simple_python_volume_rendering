@@ -12,24 +12,29 @@ License: New BSD
 
 '''
 
+import sys
 import numpy, wx
 from numpy import arange, array, float32, int8
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GL.ARB.vertex_buffer_object import *
 
-from VolRenderSkel import *
+#from VolRenderSkel import *
+import VolRenderSkel
 import reader
 
-class RenderHead(VolumeRenderSkeleton):
+class RenderHead(VolRenderSkel.VolumeRenderSkeleton):
        
     def __init__(self, parent):
-        VolumeRenderSkeleton.__init__(self, parent)
+        VolRenderSkel.VolumeRenderSkeleton.__init__(self, parent)
 
         self.data_scale = None
         self.iso_value = 0.0
         self.noise = True
 
         # Shader names (if you have your own source)
-        self.fragment_src_file = './shaders/head.f.c'
-        self.vertex_src_file = './shaders/head.v.c'
+        self.fragment_src_file = ''
+        self.vertex_src_file = ''
         
         self.fragment_shader_src = '''
         // Core
@@ -133,7 +138,7 @@ class RenderHead(VolumeRenderSkeleton):
         '''
 
     def SetupUniforms(self):
-        VolumeRenderSkeleton.SetupUniforms(self)
+        VolRenderSkel.VolumeRenderSkeleton.SetupUniforms(self)
         
         # Init the texture units
         glActiveTexture(GL_TEXTURE1)
@@ -143,8 +148,8 @@ class RenderHead(VolumeRenderSkeleton):
         glUniform1f(glGetUniformLocation(self.program, "IsoWeight"), self.iso_value)
         glUniform3f(glGetUniformLocation(self.program, "DataScale"), self.data_scale[0], self.data_scale[1], self.data_scale[2])
 
-    def LoadVolumeData(self):
-        VolumeRenderSkeleton.LoadVolumeData(self)
+    def LoadVolumeData(self): #Implementation?
+        VolRenderSkel.VolumeRenderSkeleton.LoadVolumeData(self)
 
         data = reader.DICOMReaderToNumpy(self.data_set)
         
@@ -214,7 +219,7 @@ class RenderHead(VolumeRenderSkeleton):
         return
 
     def OnKeyDown(self, event):
-        VolumeRenderSkeleton.OnKeyDown(self, event)
+        VolRenderSkel.VolumeRenderSkeleton.OnKeyDown(self, event)
         
         if event.GetKeyCode() == ord('n'):
             self.noise = not self.noise

@@ -41,4 +41,10 @@ def DICOMReaderToNumpy(directory):
     image = vtk.util.numpy_support.vtk_to_numpy(img.GetPointData().GetScalars())
     image = image.reshape((ex[5] +1, ex[1]+1, ex[3]+1))
 
-    return image
+    return ApplyWindowLevel(image, 2000, 300)
+
+
+def ApplyWindowLevel(data, window, level):
+    return np.piecewise(data,[data <= (level - 0.5 - (window-1)/2),\
+                              data > (level - 0.5 + (window-1)/2)],\
+                             [0, 255, lambda data: ((data - (level - 0.5))/(window-1) + 0.5)*(255-0)])
